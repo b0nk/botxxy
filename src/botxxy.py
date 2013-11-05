@@ -110,7 +110,6 @@ g_logo = "12G4o8o12g9l4e"
 
 # Twitter vars
 t_logo = "0,10twitter"
-t_api = None
 
 # URL spoiler
 urlpat = "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
@@ -278,21 +277,6 @@ def loadLfm():
     myprint("last.fm API -> LOADED")
   except IOError as e:
     myprint("last.fm API -> FAIL | %s" % e)
-  
-# Twitter API
-  
-def loadTwitter():
-  try:
-    lines = [line.strip() for line in open('twitter.txt', 'r')]
-    CON_KEY = lines[0]
-    CON_SEC = lines[1]
-    ACC_TOK = lines[2]
-    ACC_SEC = lines[3]
-    global t_api
-    t_api = twitter.Api(consumer_key = CON_KEY, consumer_secret = CON_SEC, access_token_key = ACC_TOK, access_token_secret = ACC_SEC)
-    myprint("twitter API -> LOADED")
-  except IOError as e:
-    myprint("Twitter API -> FAIL | %s" % e)
     
 # Catie forum cookie
   
@@ -1247,28 +1231,9 @@ def getTweet(msg):
             index = int(index)
           except ValueError:
             index = 0
-        global t_api
-        try:
-          t_user = t_api.GetUser(None, t_user)._screen_name
-          tweets = t_api.GetUserTimeline(screen_name = t_user, count = 200)
-          if not tweets:
-            myprint("%s: has no tweets" % t_user)
-            sendChanMsg(chan, "%s User: %s has no tweets" % (t_logo, t_user))
-          else:
-            
-            tweet = tweets[index].GetText()
-            t = int(tweets[index].GetCreatedAtInSeconds())
-            created = time.strftime("Posted %Hh, %Mm, %Ss ago", time.localtime(time.time() - t))
-            tweet = unescape(tweet).replace('\n', ' ')
-            myprint("%s %d %s %s" % (t_user, index, tweet, created))
-            sendChanMsg(chan, "%s @%s: %s (%s)" % (t_logo, t_user, tweet, created))
-        except twitter.TwitterError as e:
-          myprint("TwitterError: %s" % (e))
-          sendChanMsg(chan, "%s Error: %s" % (t_logo, e))
-          return None # GTFO
-        except IndexError:
-          myprint("Index Error")
-          sendChanMsg(chan, "%s Error: You have gone too far (keep below 200)" % (t_logo))
+        tweet = twitter.getTweet(t_user, index)
+        myprint(tweet)
+        sendChanMsg(chan, tweet)
       else:
         myprint("%s used bad arguments for !twitter" % (nick))
         sendChanMsg(chan, "%s Bad arguments! Usage: !twitter <twitteruser> [optional number]" % (t_logo))
@@ -1480,7 +1445,6 @@ def load():
   load8ball()
   loadLfmUsers()
   loadLfm()
-  loadTwitter()
   loadCakes()
   loginToForum()
   loadValidBoards()
