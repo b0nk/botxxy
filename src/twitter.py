@@ -1,9 +1,11 @@
 import pytwitter
 import time
+import datetime
 from mylib import unescape
 
   
 def getTweet(user, n):
+  now = int(time.time())
   t_logo = "0,10twitter"
   try:
     t_api = pytwitter.Api(consumer_key = '***REMOVED***',
@@ -20,7 +22,7 @@ def getTweet(user, n):
     else:
       tweet = tweets[n].GetText()
       t = int(tweets[n].GetCreatedAtInSeconds())
-      created = time.strftime("Posted %Hh, %Mm, %Ss ago", time.localtime(time.time() - t))
+      created = "Posted " + str(datetime.timedelta(seconds=now-t)) + " ago"
       tweet = unescape(tweet).replace('\n', ' ')
       return "%s @%s: %s (%s)" % (t_logo, t_user, tweet, created)
       
