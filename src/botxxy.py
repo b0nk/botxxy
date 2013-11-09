@@ -358,7 +358,7 @@ def inviteCmd(msg): # Parses the message to extract NICK and CHANNEL
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !invite outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -380,7 +380,7 @@ def voiceCmd(msg):
   nick = getNick(msg)
   global ignUsrs, authUsrs
   if nick not in ignUsrs and nick in authUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !voice outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -401,7 +401,7 @@ def devoiceCmd(msg):
   nick = getNick(msg)
   global ignUsrs, authUsrs
   if nick not in ignUsrs and nick in authUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !devoice outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -424,7 +424,7 @@ def opCmd(msg):
   nick = getNick(msg)
   global ignUsrs, authUsrs
   if nick not in ignUsrs and nick in authUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !op outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -445,7 +445,7 @@ def deopCmd(msg):
   nick = getNick(msg)
   global ignUsrs, authUsrs
   if nick not in ignUsrs and nick in authUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !deop outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -468,7 +468,7 @@ def hopCmd(msg):
   nick = getNick(msg)
   global ignUsrs, authUsrs
   if nick not in ignUsrs and nick in authUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !hop outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -489,7 +489,7 @@ def dehopCmd(msg):
   nick = getNick(msg)
   global ignUsrs, authUsrs
   if nick not in ignUsrs and nick in authUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !dehop outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -512,7 +512,7 @@ def topicCmd(msg):
   nick = getNick(msg)
   global ignUsrs, authUsrs
   if nick not in ignUsrs and nick in authUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !topic outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -535,7 +535,7 @@ def kickCmd(msg):
   nick = getNick(msg)
   global ignUsrs, authUsrs
   if nick not in ignUsrs and nick in authUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !kick outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -576,7 +576,7 @@ def ignCmd(msg):
   nick = getNick(msg)
   global ignUsrs, authUsrs
   if nick not in ignUsrs and nick in authUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       target = msg.split(":!ign")[1].lstrip(' ')
       if target:
         ign(nick, target)
@@ -608,7 +608,7 @@ def quoteCmd(msg): #TODO: quote IDs
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !quote outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -636,7 +636,7 @@ def addQuote(msg):
   nick = getNick(msg)
   global ignUsrs, authUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]: # Checks if quote was sent outside of a channel
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]: # Checks if quote was sent outside of a channel
       myprint("%s sent !addquote outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -661,7 +661,7 @@ def bbfquotes(msg): # blueberryfox's private function
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !blueberry outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -804,7 +804,7 @@ def startTag(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]: # Checks of command was sent in a channel
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]: # Checks of command was sent in a channel
       myprint("%s sent !starttag outside of a channel" % (nick)) #debugging
       sendNickMsg(nick, "You are not in a channel") # Warned the nickname
     else:
@@ -821,7 +821,7 @@ def endTag(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !endtag outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -838,7 +838,7 @@ def tag(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !tag outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -879,7 +879,7 @@ def setTagged(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !settagged outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -921,7 +921,7 @@ def rose(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !rose outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -961,7 +961,7 @@ def cake(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !cake outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -993,7 +993,7 @@ def boobs(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !boobs outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -1037,7 +1037,7 @@ def eightBallCmd(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !8ball outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -1110,7 +1110,7 @@ def compareLfmUsers(msg): # use of the last.fm interface (pylast) in here
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent .compare outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -1152,7 +1152,7 @@ def nowPlaying(msg): # use of the last.fm interface (pylast) in here
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent .np outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -1215,7 +1215,7 @@ def getTweet(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !twitter outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -1245,7 +1245,7 @@ def fmlCmd(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !fml outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -1261,7 +1261,7 @@ def urlSpoiler(msg):
   nick = getNick(msg)
   global ignUsrs, h, def_headers, cwf_headers
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent a URL outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -1324,7 +1324,7 @@ def gSearch(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !google outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -1348,7 +1348,7 @@ def gImageSearch(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !images outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
@@ -1374,7 +1374,7 @@ def chanSearch(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    if '#' not in msg.split(':')[1]:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
       myprint("%s sent !s4chan outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
