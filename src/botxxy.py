@@ -808,7 +808,10 @@ def startTag(msg):
       myprint("%s sent !starttag outside of a channel" % (nick)) #debugging
       sendNickMsg(nick, "You are not in a channel") # Warned the nickname
     else:
-      global isTagOn, tagged
+      global isTagOn, tagged, taggers
+      taggers.remove(botnick)
+      if 'ChanServ' in taggers:
+        taggers.remove('ChanServ')
       chan = getChannel(msg) # Get the channel where the game is taking place
       if not isTagOn: # Checks if a game is in progress
         tagged = nick # Whoever starts the game is it
@@ -850,7 +853,7 @@ def tag(msg):
           sendChanMsg(chan, "Tag who??? Usage: !tag <nick>")
         else:
           target = target.rstrip(' ') # Removes trailing spaces left by some clients auto-complete
-          if target in list(taggers): # Target must exist in the list of players
+          if target in taggers or target is botnick: # Target must exist in the list of players
             if nick == tagged: # Checks if the player is it
               if nick == target: # Checks if player is tagging himself
                 myprint("%s tagged himself" % (nick))
@@ -858,7 +861,7 @@ def tag(msg):
               elif target == botnick: # Checks if the bot gets tagged
                 myprint("%s tagged the bot!" % (nick))
                 sendChanMsg(chan, "%s tagged me!" % (nick))
-                target = random.choice(list(taggers)) # Bot picks a random player to tag
+                target = random.choice(taggers) # Bot picks a random player to tag
                 myprint("Tagging %s..." % (target))
                 tagged = target
                 sendChanMsg(chan, "%s Tag! You're it!" % (target))
@@ -891,7 +894,7 @@ def setTagged(msg):
           sendChanMsg(chan, "Set who??? Usage: !settagged <nick>")
         else:
           target = target.rstrip(' ') # Removes trailing spaces left by some clients auto-complete
-          if target in list(taggers): # Target must exist in the list of players
+          if target in taggers: # Target must exist in the list of players
             if nick == prevTagged:
               if nick == target:
                 myprint("%s set himself as tagged" % (nick))
@@ -899,7 +902,7 @@ def setTagged(msg):
               elif target == botnick:
                 myprint("%s set the bot as tagged!" % (nick))
                 sendChanMsg(chan, "%s tagged me instead!" % (nick))
-                target = random.choice(list(taggers)) # Bot picks a random player to tag
+                target = random.choice(taggers) # Bot picks a random player to tag
                 myprint("Tagging %s..." % (target))
                 tagged = target
                 sendChanMsg(chan, "%s Tag! You're it!" % (target))
@@ -1481,8 +1484,8 @@ try:
         ircmsg = ircmsg.rstrip(' ') # Removes an annoying SPACE char left by the server at the end of the string
         ircmsg = ircmsg.strip('\n\r') # Removing any unnecessary linebreaks
         nicks = ircmsg.split(' ') # Puts nicks in an array
-        myprint(str(nicks)) # debugging
-        if '353' in list(nicks):
+        myprint("Nicks: %s" % nicks)
+        if '353' in nicks:
           ircsock.send("NAMES " + chan + '\n')
         
         # Now that we have the nicks we can decide what to do with them depending on the command
