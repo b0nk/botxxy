@@ -1,7 +1,7 @@
 import pytwitter
 import time
 import datetime
-from mylib import unescape
+from mylib import unescape, myprint
 
   
 def getTweet(user, n):
@@ -22,11 +22,12 @@ def getTweet(user, n):
     else:
       tweet = tweets[n].GetText()
       t = int(tweets[n].GetCreatedAtInSeconds())
-      created = "Posted " + str(datetime.timedelta(seconds=now-t)) + " ago"
+      created = "Posted %s ago" % (datetime.timedelta(seconds=now-t))
       tweet = unescape(tweet).replace('\n', ' ')
       return "%s @%s: %s (%s)" % (t_logo, t_user, tweet, created)
       
   except pytwitter.TwitterError as e:
-    return "%s Error: %s" % (t_logo, e)
+    myprint("TwitterError: %s" % (e))
+    return "%s Error: Nope." % (t_logo)
   except IndexError:
     return "%s Error: You have gone too far (keep below 200)" % (t_logo)
