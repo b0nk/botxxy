@@ -15,8 +15,9 @@ def search(board, search):
           post = unescape(j.get('com', 'Empty post'))
           post = post.replace('<br>', ' ')
           post = post.replace('<wbr>', '')
-          post = post.replace('<span class="quote">','3') #greentext open
-          post = post.replace('</span>','') #close color
+          post = post.replace('<span class="quote">', '3') #greentext open
+          post = post.replace('<span class="deadlink">', '3') #greentext open
+          post = post.replace('</span>', '') #close color
   
           if len(post) > 300:
             post = post[0:300] + '...' #close color here also
