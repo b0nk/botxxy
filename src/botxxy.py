@@ -853,19 +853,19 @@ def tag(msg):
           sendChanMsg(chan, "Tag who??? Usage: !tag <nick>")
         else:
           target = target.rstrip(' ') # Removes trailing spaces left by some clients auto-complete
-          if target in taggers or target is botnick: # Target must exist in the list of players
+          if target is botnick: # Checks if the bot gets tagged
+            myprint("%s tagged the bot!" % (nick))
+            sendChanMsg(chan, "%s tagged me!" % (nick))
+            target = random.choice(taggers) # Bot picks a random player to tag
+            myprint("Tagging %s..." % (target))
+            tagged = target
+            sendChanMsg(chan, "%s Tag! You're it!" % (target))
+            prevTagged = nick
+          elif target in taggers: # Target must exist in the list of players
             if nick == tagged: # Checks if the player is it
               if nick == target: # Checks if player is tagging himself
                 myprint("%s tagged himself" % (nick))
                 sendChanMsg(chan, "Don't tag yourself %s" % (nick))
-              elif target == botnick: # Checks if the bot gets tagged
-                myprint("%s tagged the bot!" % (nick))
-                sendChanMsg(chan, "%s tagged me!" % (nick))
-                target = random.choice(taggers) # Bot picks a random player to tag
-                myprint("Tagging %s..." % (target))
-                tagged = target
-                sendChanMsg(chan, "%s Tag! You're it!" % (target))
-                prevTagged = nick
               else: # Player tags someone other than himself or the bot
                 myprint("%s tagged %s" % (tagged, target))
                 tagged = target
