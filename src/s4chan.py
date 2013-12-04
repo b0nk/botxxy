@@ -21,8 +21,10 @@ def search(board, search):
   
           if len(post) > 300:
             post = post[0:300] + '...' #close color here also
+            
+          boardLink = 'https://boards.4chan.org/%s/res/%s' % (board, j['no'])
   
-          text = '%s /%s/ %s | %s | %s (R:%s, I:%s)' % (logo, board, subject, post, 'https://boards.4chan.org/%s/res/%s' % (board, j['no']), j['replies'], j['images'])
+          text = '%s /%s/ %s | %s | %s (R:%s, I:%s)' % (logo, board, subject, post, boardLink, j['replies'], j['images'])
           res.append(text)
     return res
   except(IOError):
