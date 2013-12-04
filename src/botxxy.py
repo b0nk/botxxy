@@ -76,7 +76,6 @@ authDB = []
 authUsrs = []
 ignUsrs = []
 greets = []
-parts = []
 eightball = []
 quotes = []
 lfmUsers = []
@@ -217,15 +216,6 @@ def loadGreets():
     myprint("Greets -> LOADED")
   except IOError as e:
     myprint("Greets -> FAIL | %s" % e)
-# Parts
-  
-def loadParts():
-  global parts
-  try:
-    parts = [line.strip() for line in open('part.txt', 'r')]
-    myprint("Parts -> LOADED")
-  except IOError as e:
-    myprint("Parts -> FAIL | %s" % e)
   
 # 8ball
 
@@ -733,70 +723,7 @@ def sendGreet(msg):
         break
     if greet:
       sendChanMsg(chan, greet)
-  
-          #PART MESSAGES
-  
-def setPartCmd(msg):
-  nick = getNick(msg)
-  global ignUsrs
-  if nick not in ignUsrs:
-    if '#' in msg.split(':')[1]: #let's make sure people use this privately so that people won't see the part message until they leave a channel
-      chan = getChannel(msg)
-      myprint("%s sent !setquitmsg in %s. Sending warning..." % (nick, chan))
-      sendChanMsg(chan, "Don't do that in the channel %s" % (nick))
-      sendNickMsg(nick, "Send it as a notice or query(pvt)")
-    else:
-      newMsg = msg.split(":!setquitmsg")[1].lstrip(' ') # Retrieves the part message
-      if not newMsg: # Checks if part message is empty
-        setPart(nick, newMsg, False) # if empty we send False to setPart so the bot knows the user wants to unset his part message
-      else:
-        setPart(nick, newMsg, True) # in this case the user wants to change or create an entry message so we send True
 
-def setPart(nick, newMsg, toSet):
-  global parts
-  changed = False
-  for idx, content in enumerate(parts): # Here we start scanning the array
-    if nick + "|!|" in str(content): # In this case the user already has a part message
-      if toSet: # This will happen if there is a new part message and not an empty one
-        parts[idx] = nick + "|!|" + newMsg # Changes the part message to the new one
-        myprint("Resetting %s's part message to '%s'" % (nick, newMsg))
-        sendNickMsg(nick, "Part message re-set!")
-        changed = True
-        break # We've found the nickname we can get out of the loop
-      else: # This will happen if there is an empty entry message on an existing nick
-        parts[idx] = None # Completely erases the content
-        parts.remove(None)
-        myprint("Unsetting %s's part message" % (nick))
-        sendNickMsg(nick, "Part message unset!")
-        changed = True
-        break # We've found the nickname we can get out of the loop
-  if toSet and not changed: # this will happen if there is a message and we didn't find a nickname in the file which means it's the 1st time being used or it was erased previously
-        parts.append(nick + "|!|" + newMsg) # Adds the nick and corresponding part message
-        myprint("Setting %s's part message to '%s'" % (nick, newMsg))
-        sendNickMsg(nick, "Part message set!")
-  with open("part.txt", 'w') as f:
-    for i in parts:
-      f.write('%s\n' % i)
-  f.closed # Closes the file to save resources
-  
-def sendPart(msg, isQuit):
-  nick = getNick(msg)
-  global ignUsrs
-  if nick not in ignUsrs:
-    # ":b0nk!~LoC@fake.dimension PART #test :FGSFDS"
-    # ":steurun!~androirc@r3if800ykeveolu-mmuluxhgxm QUIT :Ping timeout: 260 seconds"
-    global parts
-    part = ''
-    for elem in parts:
-      if nick + "|!|" in elem:
-        part = elem.split("|!|")[1]
-        myprint("Saying goodbye to %s..." % (nick))
-        break
-    if part and isQuit: # Bot says goodbye when the user leaves the network
-      sendChanMsg("#boxxy", part)
-    elif part and not isQuit: # Bot says goodbye when the user leaves the channel
-      chan = msg.split(" PART ")[1].split(' ')[0]
-      sendChanMsg(chan, part)
   
           #TAG (play catch)
           
@@ -1423,7 +1350,7 @@ def helpcmd(msg): #Here is the help message to be sent as a private message to t
     time.sleep(0.5)
     sendNickMsg(nick, "You can also invite me to a channel and I'll thank you for inviting me there.")
     time.sleep(0.5)
-    sendNickMsg(nick, "General commands: !help !invite !rtd !quote !addquote !setjoinmsg !setquitmsg !starttag !endtag !tag !rose !boobs !8ball !pass !cake !fml")
+    sendNickMsg(nick, "General commands: !help !invite !rtd !quote !addquote !setjoinmsg !starttag !endtag !tag !rose !boobs !8ball !pass !cake !fml")
     time.sleep(0.5)
     sendNickMsg(nick, "%s commands: .setuser .np .compare" % (lfm_logo))
     time.sleep(0.5)
@@ -1443,7 +1370,6 @@ def load():
   loadAuth()
   loadIgn()
   loadGreets()
-  loadParts()
   loadQuotes()
   load8ball()
   loadLfmUsers()
@@ -1604,17 +1530,8 @@ try:
     if " JOIN " in ircmsg:
       sendGreet(ircmsg)
       
-    if " PART " in ircmsg:
-      sendPart(ircmsg, False)
-      
-    if " QUIT " in ircmsg:
-      sendPart(ircmsg, True)
-      
     if ":!setjoinmsg" in ircmsg:
       setGreetCmd(ircmsg)
-      
-    if ":!setquitmsg" in ircmsg:
-      setPartCmd(ircmsg)
     
     if ":!tag" in ircmsg:
       tag(ircmsg)
