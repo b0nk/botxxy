@@ -1463,11 +1463,14 @@ try:
       user = getUser(ircmsg)
       if user == "b0nk!~LoC@fake.dimension": # TODO: use auth
         quitIRC()
-        break
+        sys.exit(0)
       else:
         nick = getNick(ircmsg)
         myprint("%s tried to kill the bot. Sending warning..." % (nick))
         sendNickMsg(nick, "I'm afraid I can't let you do that " + nick + "...")
+        
+    if ":botxxy!~I@m.botxxy.you.see QUIT :Quit: Changing host" in ircmsg:
+      raise socket.error('derp')
       
     if ":!reload" in ircmsg: # let's say it was made to reload the vars and arrays
       user = getUser(ircmsg)
@@ -1602,3 +1605,4 @@ try:
     
 except socket.error as e:
   myprint("Bot killed / timedout (%s)" % e)
+  sys.exit(1)
