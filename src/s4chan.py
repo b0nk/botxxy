@@ -12,7 +12,9 @@ def search(board, search):
       for j in i['threads']:
         if search.lower() in j.get('sub', '').lower() or search.lower() in j.get('com', '').lower():
           subject = j.get('sub', 'Empty subject')
-          post = unescape(j.get('com', 'Empty post'))
+          subject = unescape(subject)
+          post = j.get('com', 'Empty post')
+          post = unescape(post)
           post = post.replace('<br>', ' ')
           post = post.replace('<wbr>', '')
           post = post.replace('<span class="quote">', '3') #greentext open
