@@ -21,6 +21,9 @@ def unescape(text):
     return text # leave as is
   return re.sub("&#?\w+;", fixup, text)
 
+def stripHTML(html):
+  return re.sub('<[^<]+?>', '', html)
+
 def myprint(msg):
   prompt = '>> '
   print "%s%s" % (prompt, msg)
