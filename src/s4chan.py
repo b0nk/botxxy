@@ -1,5 +1,5 @@
 import urllib, json
-from mylib import unescape
+from mylib import unescape, stripHTML
 
 def search(board, search):
   logo = '3::54chan'
@@ -20,6 +20,7 @@ def search(board, search):
           post = post.replace('<span class="quote">', '3') #greentext open
           post = post.replace('<span class="deadlink">', '3') #greentext open
           post = post.replace('</span>', '') #close color
+          post = stripHTML(post) #remove the rest of html tags
   
           if len(post) > 300:
             post = post[0:300] + '...' #close color here also
