@@ -1469,7 +1469,7 @@ try:
         myprint("%s tried to kill the bot. Sending warning..." % (nick))
         sendNickMsg(nick, "I'm afraid I can't let you do that " + nick + "...")
         
-    if ":botxxy!~I@m.botxxy.you.see QUIT :Quit: Changing host" in ircmsg:
+    if ircmsg == ":botxxy!~I@m.botxxy.you.see QUIT :Quit: Changing host":
       raise socket.error('derp')
       
     if ":!reload" in ircmsg: # let's say it was made to reload the vars and arrays
