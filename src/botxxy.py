@@ -56,7 +56,7 @@ import s4chan
 
 # Some basic variables used to configure the bot
 
-server = "irc.catiechat.net"
+server = "anewhopeee.catiechat.net"
 port = 6667 # default port
 ssl_port = 6697 # ssl port
 chans = ["#test", "#music", "#boxxy", "#nsfw"] #default channels
