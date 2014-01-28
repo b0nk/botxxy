@@ -23,7 +23,7 @@ import mylogger
 sys.stdout = mylogger.Logger()
 sys.stderr = mylogger.Logger()
 
-from mylib import unescape, myprint
+from mylib import unescape, myprint, stripHTML
 
 # URL spoiler
 # https://code.google.com/p/httplib2/
@@ -1205,7 +1205,7 @@ def urlSpoiler(msg):
             myprint("It's a youtube link")
             r, data = h.request(url, "GET", headers = def_headers)
             soup = bs4.BeautifulSoup(data)
-            url_title = soup.title.string
+            url_title = stripHTML(str(soup.find('title')))
             url_title = unescape(url_title).strip().replace('\n', ' ').rstrip(' - YouTube')
             myprint("Title: %s" % (url_title))
             try:
@@ -1215,7 +1215,7 @@ def urlSpoiler(msg):
             except(IndexError):
               r, data = h.request(url, "GET", headers = def_headers)
               soup = bs4.BeautifulSoup(data)
-              url_title = soup.title.string
+              url_title = stripHTML(str(soup.find('title')))
               url_title = unescape(url_title).strip().replace('\n', ' ')
               myprint("Title: %s" % (url_title))
               sendChanMsg(chan, "%s's link title: %s %s" % (nick, yt_logo, url_title))
@@ -1223,20 +1223,20 @@ def urlSpoiler(msg):
             myprint("It's a forum link")
             r, data = h.request(url, "GET", headers = cwf_headers)
             soup = bs4.BeautifulSoup(data)
-            url_title = soup.title.string
+            url_title = stripHTML(str(soup.find('title')))
             url_title = unescape(url_title).strip().replace('\n', ' ')
             if " Login" in url_title:
               loginToForum()
               r, data = h.request(url, "GET", headers = cwf_headers)
               soup = bs4.BeautifulSoup(data)
-              url_title = soup.title.string
+              url_title = stripHTML(str(soup.find('title')))
               url_title = unescape(url_title).strip().replace('\n', ' ')
             myprint("Title: %s" % (url_title))
             sendChanMsg(chan, "%s's link title: %s" % (nick, url_title))
           else:
             r, data = h.request(url, "GET", headers = def_headers)
             soup = bs4.BeautifulSoup(data)
-            url_title = soup.title.string
+            url_title = stripHTML(str(soup.find('title')))
             url_title = unescape(url_title).strip().replace('\n', ' ')
             myprint("Title: %s" % (url_title))
             sendChanMsg(chan, "%s's link title: %s" % (nick, url_title))
