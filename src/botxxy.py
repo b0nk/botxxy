@@ -56,7 +56,7 @@ import s4chan
 
 # Some basic variables used to configure the bot
 
-server = "anewhopeee.catiechat.net"
+server = "irc.catiechat.net"
 port = 6667 # default port
 ssl_port = 6697 # ssl port
 chans = ["#test", "#music", "#boxxy", "#nsfw"] #default channels
@@ -213,7 +213,7 @@ def loadGreets():
   global greets
   try:
     greets = [line.strip() for line in open('greet.txt', 'r')]
-    myprint("Greets -> LOADED")
+    myprint("Greets -> Loaded")
   except IOError as e:
     myprint("Greets -> FAIL | %s" % e)
   
@@ -223,7 +223,7 @@ def load8ball():
   global eightball
   try:
     eightball = [line.strip() for line in open('8ball.txt', 'r')]
-    myprint("8ball -> LOADED")
+    myprint("8ball -> Loaded")
   except IOError as e:
     myprint("8ball -> FAIL | %s" % e)
   
@@ -233,7 +233,7 @@ def loadQuotes():
   global quotes
   try:
     quotes = [line.strip() for line in open('quotes.txt', 'r')]
-    myprint("Quotes -> LOADED")
+    myprint("Quotes -> Loaded")
   except IOError as e:
     myprint("Quotes -> FAIL | %s" % e)
 
@@ -243,7 +243,7 @@ def loadCakes():
   global cakeDeaths
   try:
     cakeDeaths = [line.strip() for line in open('cake.txt', 'r')]
-    myprint("Cake -> LOADED")
+    myprint("Cake -> Loaded")
   except IOError as e:
     myprint("Cake -> FAIL | %s" % e)
 
@@ -253,7 +253,7 @@ def loadLfmUsers():
   global lfmUsers
   try:
     lfmUsers = [line.strip() for line in open('lfmusers.txt', 'r')]
-    myprint("LfmUsers -> LOADED")
+    myprint("LfmUsers -> Loaded")
   except IOError as e:
     myprint("LfmUsers -> FAIL | %s" % e)
   
@@ -264,7 +264,7 @@ def loadLfm():
     API_SEC = lines[1]
     global lastfm
     lastfm = pylast.LastFMNetwork(api_key = API_KEY, api_secret = API_SEC, username = '', password_hash = '')
-    myprint("last.fm API -> LOADED")
+    myprint("last.fm API -> Loaded")
   except IOError as e:
     myprint("last.fm API -> FAIL | %s" % e)
     
@@ -1391,218 +1391,220 @@ try:
   time.sleep(3)
   joinChans(chans)
   time.sleep(3)
-
+  stack = []
+  
   while 1: # This is our infinite loop where we'll wait for commands to show up, the 'break' function will exit the loop and end the program thus killing the bot
-    ircmsg = ircsock.recv(1024) # Receive data from the server
-    ircmsg = ircmsg.strip('\n\r') # Removing any unnecessary linebreaks
-    print ircmsg # Here we print what's coming from the server
+    stack.append(ircsock.recv(1024)) # Receive data from the server
+    while stack:
+      ircmsg = stack.pop()
+      ircmsg = ircmsg.strip('\n\r') # Removing any unnecessary linebreaks
+      print ircmsg # Here we print what's coming from the server
     
-    if "PING :" in ircmsg: # If the server pings us then we've got to respond!
-      reply = ircmsg.split("PING :")[1] # In some IRCds it is mandatory to reply to PING the same message we recieve
-      ping(reply)
+      if "PING :" in ircmsg: # If the server pings us then we've got to respond!
+        reply = ircmsg.split("PING :")[1] # In some IRCds it is mandatory to reply to PING the same message we recieve
+        ping(reply)
       
-    if " 353 " in ircmsg:
-      try:
-        # ":irc.catiechat.net 353 botxxy = #test :KernelPone ~b0nk CommVenus @botxxy " 
-        chan = ircmsg.split(" = ")[1].split(' ')[0]
-        ircmsg = ircmsg.split(':')[2] # Returns raw list of nicks
-        ircmsg = ircmsg.translate(None, '~@+&%') # Removes user mode characters
-        ircmsg = ircmsg.rstrip(' ') # Removes an annoying SPACE char left by the server at the end of the string
-        ircmsg = ircmsg.strip('\n\r') # Removing any unnecessary linebreaks
-        nicks = ircmsg.split(' ') # Puts nicks in an array
-        myprint("Nicks: %s" % nicks)
-        if '353' in nicks:
-          ircsock.send("NAMES " + chan + '\n')
-        
-        # Now that we have the nicks we can decide what to do with them depending on the command
-        if "!randkick" in lastCommand:
-          lastCommand = ''
-          randKick(nicks, chan)
-        
-        if "!starttag" in lastCommand:
-          lastCommand = ''
-          if not isTagOn:
-            taggers = nicks
-            startTag(tmpstr)
-            tmpstr = ''
-          else:
-            sendChanMsg(chan, "The game is already in progress!")
-      except IndexError:
-        myprint("Something went wrong...")
-    
-    if " INVITE " + botnick + " :" in ircmsg:
-      tmpstr = ircmsg
-      # :botxxy!~I@m.botxxy.you.see INVITE b0nk :#test
-      nick = getNick(tmpstr)
-      if nick not in ignUsrs:
-        target = tmpstr.split(':')[2]
-        myprint("%s invited the bot to %s. Joining..." % (nick, target))
-        joinChan(target)
-        sendChanMsg(target, "Thank you for inviting me here %s!" % (nick))
-        tmpstr = ''
-    
-    hasURL = re.search(urlpat, ircmsg)
-    
-    if ":hello " + botnick in ircmsg.lower() or ":hi " + botnick in ircmsg.lower(): # If we can find "Hello/Hi botxxy" it will call the function hello(nick)
-      hello(ircmsg)
+      if " 353 " in ircmsg:
+        try:
+          # ":irc.catiechat.net 353 botxxy = #test :KernelPone ~b0nk CommVenus @botxxy " 
+          chan = ircmsg.split(" = ")[1].split(' ')[0]
+          ircmsg = ircmsg.split(':')[2] # Returns raw list of nicks
+          ircmsg = ircmsg.translate(None, '~@+&%') # Removes user mode characters
+          ircmsg = ircmsg.strip() # Removes an annoying SPACE char left by the server at the end of the string
+          nicks = ircmsg.split(' ') # Puts nicks in an array
+          myprint("Nicks: %s" % nicks)
+          if '353' in nicks:
+            ircsock.send("NAMES " + chan + '\n')
+          
+          # Now that we have the nicks we can decide what to do with them depending on the command
+          if "!randkick" in lastCommand:
+            lastCommand = ''
+            randKick(nicks, chan)
+          
+          if "!starttag" in lastCommand:
+            lastCommand = ''
+            if not isTagOn:
+              taggers = nicks
+              startTag(tmpstr)
+              tmpstr = ''
+            else:
+              sendChanMsg(chan, "The game is already in progress!")
+        except IndexError:
+          myprint("Something went wrong...")
       
-    if ":!help" in ircmsg: # checks for !help
-      helpcmd(ircmsg)
-    
-    if ":!ident" in ircmsg:
-      user = getUser(ircmsg)
-      if user == "b0nk!~LoC@fake.dimension":
-        identify(True)
-        
-    if ":!newlog" in ircmsg:
-      user = getUser(ircmsg)
-      if user == "b0nk!~LoC@fake.dimension":
-        resetLog()
+      if " INVITE " + botnick + " :" in ircmsg:
+        tmpstr = ircmsg
+        # :botxxy!~I@m.botxxy.you.see INVITE b0nk :#test
+        nick = getNick(tmpstr)
+        if nick not in ignUsrs:
+          target = tmpstr.split(':')[2]
+          myprint("%s invited the bot to %s. Joining..." % (nick, target))
+          joinChan(target)
+          sendChanMsg(target, "Thank you for inviting me here %s!" % (nick))
+          tmpstr = ''
       
-    if ":!die" in ircmsg: # checks for !die
-      user = getUser(ircmsg)
-      if user == "b0nk!~LoC@fake.dimension": # TODO: use auth
-        quitIRC()
-        sys.exit(0)
-      else:
+      hasURL = re.search(urlpat, ircmsg)
+      
+      if ":hello " + botnick in ircmsg.lower() or ":hi " + botnick in ircmsg.lower(): # If we can find "Hello/Hi botxxy" it will call the function hello(nick)
+        hello(ircmsg)
+        
+      if ":!help" in ircmsg: # checks for !help
+        helpcmd(ircmsg)
+      
+      if ":!ident" in ircmsg:
+        user = getUser(ircmsg)
+        if user == "b0nk!~LoC@fake.dimension":
+          identify(True)
+          
+      if ":!newlog" in ircmsg:
+        user = getUser(ircmsg)
+        if user == "b0nk!~LoC@fake.dimension":
+          resetLog()
+        
+      if ":!die" in ircmsg: # checks for !die
+        user = getUser(ircmsg)
+        if user == "b0nk!~LoC@fake.dimension": # TODO: use auth
+          quitIRC()
+          sys.exit(0)
+        else:
+          nick = getNick(ircmsg)
+          myprint("%s tried to kill the bot. Sending warning..." % (nick))
+          sendNickMsg(nick, "I'm afraid I can't let you do that " + nick + "...")
+          
+      if ircmsg == ":botxxy!~I@m.botxxy.you.see QUIT :Quit: Changing host":
+        raise socket.error('derp')
+        
+      if ":!reload" in ircmsg: # let's say it was made to reload the vars and arrays
+        user = getUser(ircmsg)
+        if user == "b0nk!~LoC@fake.dimension":
+          load()
+      
+      if ":!invite" in ircmsg:
+        inviteCmd(ircmsg)
+        
+      if ":!voice" in ircmsg:
+        voiceCmd(ircmsg)
+        
+      if ":!devoice" in ircmsg:
+        devoiceCmd(ircmsg)
+        
+      if ":!op" in ircmsg:
+        opCmd(ircmsg)
+        
+      if ":!deop" in ircmsg:
+        deopCmd(ircmsg)
+      
+      if ":!hop" in ircmsg:
+        hopCmd(ircmsg)
+        
+      if ":!dehop" in ircmsg:
+        dehopCmd(ircmsg)
+      
+      if ":!kick" in ircmsg:
+        kickCmd(ircmsg)
+        
+      if ":!rtd" in ircmsg:
+        dice(ircmsg)
+        
+      if ":!randkick" in ircmsg:
         nick = getNick(ircmsg)
-        myprint("%s tried to kill the bot. Sending warning..." % (nick))
-        sendNickMsg(nick, "I'm afraid I can't let you do that " + nick + "...")
+        if nick not in ignUsrs:
+          if '#' not in ircmsg.split(':')[1]:
+            sendNickMsg(nick, "You are not in a channel!")
+          else:
+            chan = getChannel(ircmsg)
+            ircsock.send("NAMES " + chan + '\n')
+            myprint("Getting NAMES from %s" % (chan))
+            lastCommand = "!randkick"
         
-    if ircmsg == ":botxxy!~I@m.botxxy.you.see QUIT :Quit: Changing host":
-      raise socket.error('derp')
+      if ":!topic" in ircmsg:
+        topicCmd(ircmsg)
       
-    if ":!reload" in ircmsg: # let's say it was made to reload the vars and arrays
-      user = getUser(ircmsg)
-      if user == "b0nk!~LoC@fake.dimension":
-        load()
-    
-    if ":!invite" in ircmsg:
-      inviteCmd(ircmsg)
+      if ":!pass" in ircmsg:
+        authCmd(ircmsg)
       
-    if ":!voice" in ircmsg:
-      voiceCmd(ircmsg)
+      if ":!quote" in ircmsg:
+        quoteCmd(ircmsg)
+        
+      if ":!addquote" in ircmsg:
+        addQuote(ircmsg)
+        
+      if ":!blueberry" in ircmsg: #this will broadcast all of blueberrys favorite quotes :3
+        bbfquotes(ircmsg)
       
-    if ":!devoice" in ircmsg:
-      devoiceCmd(ircmsg)
+      if " JOIN " in ircmsg:
+        sendGreet(ircmsg)
+        
+      if ":!setjoinmsg" in ircmsg:
+        setGreetCmd(ircmsg)
       
-    if ":!op" in ircmsg:
-      opCmd(ircmsg)
+      if ":!tag" in ircmsg:
+        tag(ircmsg)
+        
+      if ":!starttag" in ircmsg:
+        nick = getNick(ircmsg)
+        if nick not in ignUsrs:
+          if '#' not in ircmsg.split(':')[1]:
+            sendNickMsg(nick, "You are not in a channel!")
+          else:
+            chan = getChannel(ircmsg)
+            ircsock.send("NAMES " + chan + '\n')
+            myprint("Getting NAMES from %s" % (chan))
+            lastCommand = "!starttag"
+            tmpstr = ircmsg
       
-    if ":!deop" in ircmsg:
-      deopCmd(ircmsg)
-    
-    if ":!hop" in ircmsg:
-      hopCmd(ircmsg)
+      if ":!endtag" in ircmsg:
+        endTag(ircmsg)
+        
+      if ":!settagged" in ircmsg:
+        setTagged(ircmsg)
+        
+      if ":!rose" in ircmsg:
+        rose(ircmsg)
+        
+      if ":!boobs" in ircmsg:
+        boobs(ircmsg)
+  
+      if ":!cake" in ircmsg:
+        cake(ircmsg)
+        
+      if ":!say" in ircmsg:
+        sayCmd(ircmsg)
+        
+      if ":!8ball" in ircmsg:
+        eightBallCmd(ircmsg)
+        
+      if ":!ign" in ircmsg:
+        ignCmd(ircmsg)
       
-    if ":!dehop" in ircmsg:
-      dehopCmd(ircmsg)
-    
-    if ":!kick" in ircmsg:
-      kickCmd(ircmsg)
+      if ":.np" in ircmsg:
+        nowPlaying(ircmsg)
       
-    if ":!rtd" in ircmsg:
-      dice(ircmsg)
-      
-    if ":!randkick" in ircmsg:
-      nick = getNick(ircmsg)
-      if nick not in ignUsrs:
-        if '#' not in ircmsg.split(':')[1]:
-          sendNickMsg(nick, "You are not in a channel!")
-        else:
-          chan = getChannel(ircmsg)
-          ircsock.send("NAMES " + chan + '\n')
-          myprint("Getting NAMES from %s" % (chan))
-          lastCommand = "!randkick"
-      
-    if ":!topic" in ircmsg:
-      topicCmd(ircmsg)
-    
-    if ":!pass" in ircmsg:
-      authCmd(ircmsg)
-    
-    if ":!quote" in ircmsg:
-      quoteCmd(ircmsg)
-      
-    if ":!addquote" in ircmsg:
-      addQuote(ircmsg)
-      
-    if ":!blueberry" in ircmsg: #this will broadcast all of blueberrys favorite quotes :3
-      bbfquotes(ircmsg)
-    
-    if " JOIN " in ircmsg:
-      sendGreet(ircmsg)
-      
-    if ":!setjoinmsg" in ircmsg:
-      setGreetCmd(ircmsg)
-    
-    if ":!tag" in ircmsg:
-      tag(ircmsg)
-      
-    if ":!starttag" in ircmsg:
-      nick = getNick(ircmsg)
-      if nick not in ignUsrs:
-        if '#' not in ircmsg.split(':')[1]:
-          sendNickMsg(nick, "You are not in a channel!")
-        else:
-          chan = getChannel(ircmsg)
-          ircsock.send("NAMES " + chan + '\n')
-          myprint("Getting NAMES from %s" % (chan))
-          lastCommand = "!starttag"
-          tmpstr = ircmsg
-    
-    if ":!endtag" in ircmsg:
-      endTag(ircmsg)
-      
-    if ":!settagged" in ircmsg:
-      setTagged(ircmsg)
-      
-    if ":!rose" in ircmsg:
-      rose(ircmsg)
-      
-    if ":!boobs" in ircmsg:
-      boobs(ircmsg)
-
-    if ":!cake" in ircmsg:
-      cake(ircmsg)
-      
-    if ":!say" in ircmsg:
-      sayCmd(ircmsg)
-      
-    if ":!8ball" in ircmsg:
-      eightBallCmd(ircmsg)
-      
-    if ":!ign" in ircmsg:
-      ignCmd(ircmsg)
-    
-    if ":.np" in ircmsg:
-      nowPlaying(ircmsg)
-    
-    if ":.setuser" in ircmsg:
-      setLfmUserCmd(ircmsg)
-      
-    if ":.compare" in ircmsg:
-      compareLfmUsers(ircmsg)
-      
-    if ":!google" in ircmsg:
-      gSearch(ircmsg)
-      
-    if ":!images" in ircmsg:
-      gImageSearch(ircmsg)
-      
-    if ":!twitter" in ircmsg:
-      getTweet(ircmsg)
-      
-    if ":!fml" in ircmsg:
-      fmlCmd(ircmsg)
-      
-    if ":!s4chan" in ircmsg:
-      chanSearch(ircmsg)
-      
-    if hasURL is not None and 'nospoil' not in ircmsg:
-      urlSpoiler(ircmsg)
-      hasURL = None
+      if ":.setuser" in ircmsg:
+        setLfmUserCmd(ircmsg)
+        
+      if ":.compare" in ircmsg:
+        compareLfmUsers(ircmsg)
+        
+      if ":!google" in ircmsg:
+        gSearch(ircmsg)
+        
+      if ":!images" in ircmsg:
+        gImageSearch(ircmsg)
+        
+      if ":!twitter" in ircmsg:
+        getTweet(ircmsg)
+        
+      if ":!fml" in ircmsg:
+        fmlCmd(ircmsg)
+        
+      if ":!s4chan" in ircmsg:
+        chanSearch(ircmsg)
+        
+      if hasURL is not None and 'nospoil' not in ircmsg:
+        urlSpoiler(ircmsg)
+        hasURL = None
     
 except socket.error as e:
   myprint("Bot killed / timedout (%s)" % e)
-  sys.exit(1)
+  sys.exit(-1)
