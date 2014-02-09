@@ -116,9 +116,8 @@ yt_logo = "0,4You1,0Tube"
 
 # Internet
 h = httplib2.Http(disable_ssl_certificate_validation = True, timeout = 10)
-userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0'
+userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0'
 def_headers = {'user-agent': userAgent}
-cwf_headers = {}
 
 #4chan vars
 chanLogo = '3::54chan'
@@ -268,29 +267,7 @@ def loadLfm():
   except IOError as e:
     myprint("last.fm API -> FAIL | %s" % e)
     
-# Catie forum cookie
-  
-def loginToForum():
-  global cwf_headers, userAgent
-  try:
-    lines = [line.strip() for line in open('cwf.txt', 'r')]
-    username = lines[0]
-    password = lines[1]
-    
-    loginURL = 'http://forum.catiewayne.com/ucp.php?mode=login'
-    body = {'username': username, 'password': password, 'login': 'Login'}
-    headers = {'content-type': 'application/x-www-form-urlencoded'}
-    
-    r, content = h.request(loginURL, method = "POST", headers = headers, body = urllib.urlencode(body))
-    if r:
-      if r.status is 200:
-        myprint("Logged in to forum")
-        cookie_data = r['set-cookie'].split('; ')
-        cookie = '%s; %s; %s;' % (cookie_data[12].split(' ')[1], cookie_data[16].split(' ')[1], cookie_data[20].split(' ')[1])
-        cwf_headers = {'Cookie':cookie}
-  except (IOError) as e:
-    myprint("NOT logged in | %s" % e)
-      
+
 # 4chan board list
 
 def loadValidBoards():
@@ -1219,20 +1196,6 @@ def urlSpoiler(msg):
               url_title = unescape(url_title).strip().replace('\n', ' ')
               myprint("Title: %s" % (url_title))
               sendChanMsg(chan, "%s's link title: %s %s" % (nick, yt_logo, url_title))
-          elif 'forum.catiewayne.com' in urlparse.urlparse(url)[1]:
-            myprint("It's a forum link")
-            r, data = h.request(url, "GET", headers = cwf_headers)
-            soup = bs4.BeautifulSoup(data)
-            url_title = stripHTML(str(soup.find('title')))
-            url_title = unescape(url_title).strip().replace('\n', ' ')
-            if " Login" in url_title:
-              loginToForum()
-              r, data = h.request(url, "GET", headers = cwf_headers)
-              soup = bs4.BeautifulSoup(data)
-              url_title = stripHTML(str(soup.find('title')))
-              url_title = unescape(url_title).strip().replace('\n', ' ')
-            myprint("Title: %s" % (url_title))
-            sendChanMsg(chan, "%s's link title: %s" % (nick, url_title))
           else:
             r, data = h.request(url, "GET", headers = def_headers)
             soup = bs4.BeautifulSoup(data)
@@ -1375,7 +1338,6 @@ def load():
   loadLfmUsers()
   loadLfm()
   loadCakes()
-  loginToForum()
   loadValidBoards()
 
 # Connection
