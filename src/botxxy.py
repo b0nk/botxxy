@@ -1268,11 +1268,11 @@ def chanSearch(msg):
   global ignUsrs
   if nick not in ignUsrs:
     if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
-      myprint("%s sent !s4chan outside of a channel" % (nick))
+      myprint("%s sent !4chan outside of a channel" % (nick))
       sendNickMsg(nick, "You are not in a channel")
     else:
       chan = getChannel(msg)
-      query = msg.split(":!s4chan")[1].strip()
+      query = msg.split(":!4chan")[1].strip()
       args = query.split(" ", 1)
       if len(args) is 2:
         board = args[0]
@@ -1290,8 +1290,8 @@ def chanSearch(msg):
             myprint("Invalid board %s" % (board))
             sendChanMsg(chan, "%s No such board /%s/" % (chanLogo, board))
       else:
-        myprint("%s used bad arguments for !s4chan" % (nick))
-        sendChanMsg(chan, "%s Bad arguments! Usage: !s4chan <board> <search terms>" % (chanLogo))
+        myprint("%s used bad arguments for !4chan" % (nick))
+        sendChanMsg(chan, "%s Bad arguments! Usage: !4chan <board> <search terms>" % (chanLogo))
 
           #QUIT
 
@@ -1321,7 +1321,7 @@ def helpcmd(msg): #Here is the help message to be sent as a private message to t
     time.sleep(0.5)
     sendNickMsg(nick, "%s commands: !google !images" % (g_logo))
     time.sleep(0.5)
-    sendNickMsg(nick, "%s commands: !s4chan" % (chanLogo))
+    sendNickMsg(nick, "%s commands: !4chan" % (chanLogo))
     if nick in authUsrs:
       sendNickMsg(nick, "Channel control commands: !op !deop !hop !dehop !voice !devoice !topic !kick !randkick")
       time.sleep(0.5)
@@ -1560,7 +1560,7 @@ try:
       if ":!fml" in ircmsg:
         fmlCmd(ircmsg)
         
-      if ":!s4chan" in ircmsg:
+      if ":!4chan" in ircmsg:
         chanSearch(ircmsg)
         
       if hasURL is not None and 'nospoil' not in ircmsg:
