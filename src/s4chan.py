@@ -22,8 +22,8 @@ def search(board, search):
           post = post.replace('</span>', '') #close color
           post = stripHTML(post) #remove the rest of html tags
   
-          if len(post) > 300:
-            post = post[0:300] + '...' #close color here also
+          if len(post) > 150:
+            post = post[0:150] + '...' #close color here also
             
           boardLink = 'https://boards.4chan.org/%s/res/%s' % (board, j['no'])
   
