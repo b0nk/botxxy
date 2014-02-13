@@ -54,6 +54,9 @@ import fml
 # 4chan search
 import s4chan
 
+# Humble Bundle
+import hb
+
 # Some basic variables used to configure the bot
 
 server = "irc.catiechat.net"
@@ -1293,6 +1296,22 @@ def chanSearch(msg):
         myprint("%s used bad arguments for !4chan" % (nick))
         sendChanMsg(chan, "%s Bad arguments! Usage: !4chan <board> <search terms>" % (chanLogo))
 
+
+          #Humble Bundle
+          
+def humbleBundle(msg):
+  nick = getNick(msg)
+  global ignUsrs
+  if nick not in ignUsrs:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
+      myprint("%s sent !hb outside of a channel" % (nick))
+      sendNickMsg(nick, "You are not in a channel")
+    else:
+      chan = getChannel(msg)
+      games = hb.getGames()
+      myprint(games)
+      sendChanMsg(chan, "%s" % games)
+  
           #QUIT
 
 def quitIRC(): #This kills the bot!
@@ -1562,6 +1581,9 @@ try:
         
       if ":!4chan" in ircmsg:
         chanSearch(ircmsg)
+        
+      if ":!hb" in ircmsg:
+        humbleBundle(ircmsg)
         
       if hasURL is not None and 'nospoil' not in ircmsg:
         urlSpoiler(ircmsg)
