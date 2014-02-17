@@ -198,6 +198,7 @@ def loadAuth():
     myprint("Auth -> Loaded")
   except IOError as e:
     myprint("Auth -> FAIL | %s" % e)
+    authDB = []
 
 # Ignores
   
@@ -208,6 +209,7 @@ def loadIgn():
     myprint("Ign -> %s" % ignUsrs)
   except IOError as e:
     myprint("Ign -> FAIL | %s" % e)
+    ignUsrs = []
   
 # Greets
 
@@ -218,6 +220,7 @@ def loadGreets():
     myprint("Greets -> Loaded")
   except IOError as e:
     myprint("Greets -> FAIL | %s" % e)
+    greets = []
   
 # 8ball
 
@@ -228,6 +231,7 @@ def load8ball():
     myprint("8ball -> Loaded")
   except IOError as e:
     myprint("8ball -> FAIL | %s" % e)
+    eightball = []
   
 # Quotes
 
@@ -238,6 +242,7 @@ def loadQuotes():
     myprint("Quotes -> Loaded")
   except IOError as e:
     myprint("Quotes -> FAIL | %s" % e)
+    quotes = []
 
 # Cakes
 
@@ -248,6 +253,7 @@ def loadCakes():
     myprint("Cake -> Loaded")
   except IOError as e:
     myprint("Cake -> FAIL | %s" % e)
+    cakeDeaths = []
 
 # Last.fm Users
 
@@ -258,6 +264,7 @@ def loadLfmUsers():
     myprint("LfmUsers -> Loaded")
   except IOError as e:
     myprint("LfmUsers -> FAIL | %s" % e)
+    lfmUsers = []
   
 def loadLfm():
   try:
