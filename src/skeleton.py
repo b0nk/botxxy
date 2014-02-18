@@ -6,7 +6,7 @@ from mylib import myprint, unescape
 
 # Some basic variables used to configure the bot
 
-server = "boxxybabee.catiechat.net" # EU server
+server = "irc.catiechat.net" # EU server
 #server = "anewhopeee.catiechat.net" # US server
 port = 6667 # default port
 ssl_port = 6697 # ssl port
