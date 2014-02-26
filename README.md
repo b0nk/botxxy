@@ -2,9 +2,9 @@
 
 ## About
 
-A python IRC bot for [CatieChat](http://www.catiechat.net/)
-This is the original bot code I made to learn python
-Use [skeleton.py](https://github.com/b0nk/botxxy/blob/master/src/skeleton.py) to build new features
+A python IRC bot for [CatieChat](http://www.catiechat.net/)  
+This is the original bot code I made to learn python  
+Use [skeleton.py](https://github.com/b0nk/botxxy/blob/master/src/skeleton.py) to build new features  
 ~~It is still in development~~
   
 ## Requires:
