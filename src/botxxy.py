@@ -1457,10 +1457,7 @@ try:
         else:
           nick = getNick(ircmsg)
           myprint("%s tried to kill the bot. Sending warning..." % (nick))
-          sendNickMsg(nick, "I'm afraid I can't let you do that " + nick + "...")
-          
-      if ircmsg == ":botxxy!~I@m.botxxy.you.see QUIT :Quit: Changing host":
-        raise socket.error('derp')
+          sendNickMsg(nick, "I'm afraid I can't let you do that %s..." % nick)
         
       if ":!reload" in ircmsg: # let's say it was made to reload the vars and arrays
         user = getUser(ircmsg)
@@ -1596,6 +1593,9 @@ try:
         urlSpoiler(ircmsg)
         hasURL = None
     
+      if ircmsg.startswith("ERROR :Closing Link:"):
+        raise socket.error('derp')
+      
 except socket.error as e:
   myprint("Bot killed / timedout (%s)" % e)
   sys.exit(-1)
