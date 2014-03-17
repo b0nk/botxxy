@@ -1206,6 +1206,13 @@ def urlSpoiler(msg):
               url_title = unescape(url_title).strip().replace('\n', ' ')
               myprint("Title: %s" % (url_title))
               sendChanMsg(chan, "%s's link title: %s %s" % (nick, yt_logo, url_title))
+          if re.findall("4chan.org/(.+)/res/(\d+)", url):
+            threadInfo = re.findall("4chan.org/(.+)/res/(\d+)", url)
+            board = threadInfo[0][0]
+            thread = threadInfo[0][1]
+            url_title = s4chan.getThreadInfo(board, thread)
+            myprint("4chan Title: %s" % url_title)
+            sendChanMsg(chan, "%s's link title: %s" % (nick, url_title))
           else:
             r, data = h.request(url, "GET", headers = def_headers)
             soup = bs4.BeautifulSoup(data)
