@@ -1183,7 +1183,7 @@ def urlSpoiler(msg):
       sendNickMsg(nick, "You are not in a channel")
     else:
       chan = getChannel(msg)
-      url = re.findall(urlpat, msg)[0]
+      url = re.search(urlpat, msg).group(0)
       myprint("Getting title from: %s" % (url))
       try:
         r, data = h.request(url, "HEAD")
@@ -1196,7 +1196,7 @@ def urlSpoiler(msg):
             url_title = unescape(url_title).strip().replace('\n', ' ').rstrip(' - YouTube')
             myprint("Title: %s" % (url_title))
             try:
-              yt_link = 'https://youtu.be/%s' % re.findall('v\=([a-zA-Z0-9-_=]+)', url)[0]
+              yt_link = 'https://youtu.be/%s' % re.search('v\=([a-zA-Z0-9-_=]+)', url).group(1)
               myprint (yt_link)
               sendChanMsg(chan, "%s's link title: %s %s | %s" % (nick, yt_logo, url_title, yt_link))
             except(IndexError):
@@ -1206,10 +1206,10 @@ def urlSpoiler(msg):
               url_title = unescape(url_title).strip().replace('\n', ' ')
               myprint("Title: %s" % (url_title))
               sendChanMsg(chan, "%s's link title: %s %s" % (nick, yt_logo, url_title))
-          if re.findall("4chan.org/(.+)/res/(\d+)", url):
-            threadInfo = re.findall("4chan.org/(.+)/res/(\d+)", url)
-            board = threadInfo[0][0]
-            thread = threadInfo[0][1]
+          elif re.search("4chan.org/(.+)/res/(\d+)", url):
+            threadInfo = re.search("4chan.org/(.+)/res/(\d+)", url)
+            board = threadInfo.group(1)
+            thread = threadInfo.group(2)
             url_title = s4chan.getThreadInfo(board, thread)
             myprint("4chan Title: %s" % url_title)
             sendChanMsg(chan, "%s's link title: %s" % (nick, url_title))
