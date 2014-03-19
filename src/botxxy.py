@@ -1128,7 +1128,7 @@ def nowPlaying(msg): # use of the last.fm interface (pylast) in here
 
           #TWITTER
           
-def getTweet(msg):
+def getTwitter(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
@@ -1137,23 +1137,24 @@ def getTweet(msg):
       sendNickMsg(nick, "You are not in a channel")
     else:
       chan = getChannel(msg)
-      arg = msg.split(":!twitter")[1].lstrip(' ')
-      index = 0
-      if arg:
-        t_user = arg.translate(None, '@')
-        if ' ' in arg:
-          t_user = arg.split(' ')[0]
-          index = arg.split(' ')[1]
-          try:
-            index = int(index)
-          except ValueError:
-            index = 0
-        tweet = twitter.getTweet(t_user, index)
-        myprint(tweet)
-        sendChanMsg(chan, tweet)
+      args = re.search(":!twitter ([@#]?\w+) ?(\d+)?", msg)
+      if args:
+        query = args.group(1)
+        index = args.group(2)
+        try:
+          index = int(index)
+        except (ValueError, TypeError):
+          index = 0
+        if query[0] == "#":
+          res = twitter.search(query, index)
+        else:
+          res = twitter.getTweet(query, index)
+        
+        myprint(res)
+        sendChanMsg(chan, res)
       else:
         myprint("%s used bad arguments for !twitter" % (nick))
-        sendChanMsg(chan, "%s Bad arguments! Usage: !twitter <twitteruser> [optional number]" % (t_logo))
+        sendChanMsg(chan, "%s Bad arguments! Usage: !twitter <@user | #hashtag> [optional index]" % (t_logo))
 
 
           #FML
@@ -1585,7 +1586,7 @@ try:
         gImageSearch(ircmsg)
         
       if ":!twitter" in ircmsg:
-        getTweet(ircmsg)
+        getTwitter(ircmsg)
         
       if ":!fml" in ircmsg:
         fmlCmd(ircmsg)
