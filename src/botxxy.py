@@ -26,7 +26,6 @@ sys.stderr = mylogger.Logger()
 from mylib import unescape, myprint, stripHTML
 
 # URL spoiler
-# https://code.google.com/p/httplib2/
 import httplib2
 import re
 import bs4
