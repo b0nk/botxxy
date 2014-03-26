@@ -37,7 +37,6 @@ import urlparse
 import pylast
 
 # Imports for google search
-import urllib
 import google
 
 # Imports for feeds
