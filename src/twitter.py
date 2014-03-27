@@ -1,14 +1,15 @@
 import pytwitter
+import apikeys
 import time
 import datetime
 from mylib import unescape, myprint
 
 t_logo = "0,10twitter"
 
-t_api = pytwitter.Api(consumer_key = '***REMOVED***',
-                          consumer_secret = '***REMOVED***',
-                          access_token_key = '***REMOVED***',
-                          access_token_secret = '***REMOVED***')
+t_api = pytwitter.Api(consumer_key        = apikeys.TWT_CON_KEY,
+                      consumer_secret     = apikeys.TWT_CON_SEC,
+                      access_token_key    = apikeys.TWT_TOK_KEY,
+                      access_token_secret = apikeys.TWT_TOK_SEC)
 
 def getTweet(user, n):
   now = int(time.time())

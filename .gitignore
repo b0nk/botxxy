@@ -169,3 +169,4 @@ src/*.bat
 .dropbox
 src/test.py
 src/*.log
+src/apikeys.py
