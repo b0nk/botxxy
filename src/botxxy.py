@@ -25,6 +25,8 @@ sys.stderr = mylogger.Logger()
 
 from mylib import unescape, myprint, stripHTML
 
+import apikeys
+
 # URL spoiler
 import httplib2
 import re
@@ -265,16 +267,11 @@ def loadLfmUsers():
     lfmUsers = []
   
 def loadLfm():
-  try:
-    lines = [line.strip() for line in open('lfm.txt', 'r')]
-    API_KEY = lines[0]
-    API_SEC = lines[1]
-    global lastfm
-    lastfm = pylast.LastFMNetwork(api_key = API_KEY, api_secret = API_SEC, username = '', password_hash = '')
-    myprint("last.fm API -> Loaded")
-  except IOError as e:
-    myprint("last.fm API -> FAIL | %s" % e)
-    
+  global lastfm
+  API_KEY = apikeys.LFM_KEY
+  API_SEC = apikeys.LFM_SEC
+  lastfm = pylast.LastFMNetwork(api_key = API_KEY, api_secret = API_SEC, username = '', password_hash = '')
+  myprint("last.fm API -> Loaded")  
 
 # 4chan board list
 
@@ -957,19 +954,19 @@ def eightBallCmd(msg):
       sendNickMsg(nick, "You are not in a channel")
     else:
       chan = getChannel(msg)
-      question = msg.split(':!8ball')[1].lstrip(' ')
-      if not question or '?' not in question:
-        myprint("%s didn't ask a question" % (nick))
-        sendChanMsg(chan, "How about you ask me a question properly %s? Usage: !8ball [<question>]?" % (nick))
-      else:
+      question = re.search(":!8ball (.+\?|.+ \?)", msg)
+      if question:
         global eightball
         answer = random.choice(eightball)
         if answer:
           myprint("8ball says: %s" % (answer))
-          sendChanMsg(chan, "%s asked [%s] the 8ball says: %s" % (nick, question, answer))
+          sendChanMsg(chan, "%s asked [%s] the 8ball says: %s" % (nick, question.group(1), answer))
         else:
           myprint("No 8ball answers")
           sendChanMsg(chan, "No 8ball answers :(")
+      else:
+        myprint("%s didn't ask a question" % (nick))
+        sendChanMsg(chan, "How about you ask me a question properly %s? Usage: !8ball [<question>]?" % (nick))
         
           #LAST.FM
           
@@ -986,11 +983,11 @@ def setLfmUserCmd(msg):
   nick = getNick(msg)
   global ignUsrs
   if nick not in ignUsrs:
-    lfm_username = msg.split(":.setuser")[1].lstrip(' ')
+    lfm_username = re.search(":.setuser (\w+)?", msg)
     if not lfm_username:
       setLfmUser(nick, lfm_username, False) #sends false flag to unset username
     else:
-      setLfmUser(nick, lfm_username, True) #sends true flag to set/re-set username
+      setLfmUser(nick, lfm_username.group(1), True) #sends true flag to set/re-set username
 
 
 def setLfmUser(nick, lfm_username, toSet):
@@ -1030,12 +1027,12 @@ def compareLfmUsers(msg): # use of the last.fm interface (pylast) in here
       sendNickMsg(nick, "You are not in a channel")
     else:
       chan = getChannel(msg)
-      args = msg.split(':')[2].rstrip(' ').split(' ') # puts usernames in array
-      if len(args) == 3: # correct usage
-        user1 = args[1] # assigning usernames to vars
-        user2 = args[2]
-        global lastfm
+      args = re.search(":.compare (\w+) (\w+)", msg)
+      if args: # correct usage
+        user1 = args.group(1) # assigning usernames to vars
+        user2 = args.group(2)
         try:
+          global lastfm
           compare = lastfm.get_user(user1).compare_with_user(user2, 5) # comparison information from pylast
           global cmp_bars
           index = round(float(compare[0]), 2)*100 # compare[0] contains a str with a num from 0-1 here we round it to 4 digits and turn it to a percentage 0-100
@@ -1046,14 +1043,12 @@ def compareLfmUsers(msg): # use of the last.fm interface (pylast) in here
           raw_artists = []
           raw_artists = compare[1] # compare[1] contains an array of pylast.artist objects
           artist_list = ''
-          if len(raw_artists) > 0: # users have artists in common
-            while raw_artists:
-              artist_list += raw_artists.pop().get_name() + ", " # artist list string is built
-            artist_list = artist_list.rstrip(", ")
+          if raw_artists: # users have artists in common
+            artist_list = ", ".join(i.get_name() for i in raw_artists)
           else: # no artists in common so we return '(None)'
-            artist_list = "(None)"
-            myprint("Comparison between %s and %s %d%% %s" % (user1, user2, index, artist_list))
-            sendChanMsg(chan, "%s Comparison: %s %s %s - Similarity: %d%% - Common artists: %s" % (lfm_logo, user1, bar, user2, index, artist_list))
+            artist_list = "N/A"
+          myprint("Comparison between %s and %s %d%% %s" % (user1, user2, index, artist_list))
+          sendChanMsg(chan, "%s Comparison: %s %s %s - Similarity: %d%% - Common artists: %s" % (lfm_logo, user1, bar, user2, index, artist_list))
         except pylast.WSError as e: # catched the exception, user truly does not exist
           print e.details
           sendChanMsg(chan, "%s Error: %s" % (lfm_logo, e.details))
@@ -1072,15 +1067,15 @@ def nowPlaying(msg): # use of the last.fm interface (pylast) in here
       sendNickMsg(nick, "You are not in a channel")
     else:
       chan = getChannel(msg)
-      target = msg.split(":.np")[1].lstrip(' ')
+      target = re.search(":.np ?(\w+)?", msg).group(1)
       if not target: # let's check the file
         target = getLfmUser(nick)
       if not target: # he is not in the db
         sendChanMsg(chan , "%s First set your username with .setuser <last.fm username>. Alternatively use .np <last.fm username>" % (lfm_logo))
         myprint("%s sent .np but is not registered" % (nick))
       else:
-        global lastfm
         try:
+          global lastfm
           lfm_user = lastfm.get_user(target) # returns pylast.User object
           if lfm_user.get_playcount() < 1: # checks if user has scrobbled anything EVER
             myprint("%s has an empty library" % (target)) # no need to get a nowplaying when the library is empty
@@ -1206,6 +1201,7 @@ def urlSpoiler(msg):
               myprint("Title: %s" % (url_title))
               sendChanMsg(chan, "%s's link title: %s %s" % (nick, yt_logo, url_title))
           elif re.search("4chan.org/(.+)/res/(\d+)", url):
+            myprint("It's a 4chan link")
             threadInfo = re.search("4chan.org/(.+)/res/(\d+)", url)
             board = threadInfo.group(1)
             thread = threadInfo.group(2)
@@ -1238,8 +1234,9 @@ def gSearch(msg):
       sendNickMsg(nick, "You are not in a channel")
     else:
       chan = getChannel(msg)
-      query = msg.split(":!google")[1].lstrip(' ')
-      if query:
+      arg = re.search(":!google (.+)", msg)
+      if arg:
+        query = arg.group(1)
         myprint('Google web search for: %s' % (query))
         res = google.webSearch(query)
         if res:
@@ -1262,8 +1259,9 @@ def gImageSearch(msg):
       sendNickMsg(nick, "You are not in a channel")
     else:
       chan = getChannel(msg)
-      query = msg.split(":!images")[1].lstrip(' ')
-      if query:
+      arg = re.search(":!images (.+)", msg)
+      if arg:
+        query = arg.group(1)
         myprint('Google image search for: %s' % (query))
         res = google.imageSearch(query)
         if res:
@@ -1288,11 +1286,10 @@ def chanSearch(msg):
       sendNickMsg(nick, "You are not in a channel")
     else:
       chan = getChannel(msg)
-      query = msg.split(":!4chan")[1].strip()
-      args = query.split(" ", 1)
-      if len(args) is 2:
-        board = args[0]
-        sterms = args[1]
+      args = re.search(":!4chan (\w+) (.+)", msg)
+      if args:
+        board = args.group(1)
+        sterms = args.group(2)
         if board in validBoards:
           res = s4chan.search(board, sterms)
           if res:
