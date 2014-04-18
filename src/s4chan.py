@@ -3,6 +3,18 @@ from mylib import unescape, stripHTML
 
 logo = '3::54chan'
 
+def format(comment):
+
+  comment = unescape(comment)
+  comment = comment.replace('<br>', ' ')
+  comment = comment.replace('<wbr>', '')
+  comment = comment.replace('<span class="quote">', '3') #greentext open
+  comment = comment.replace('<span class="deadlink">', '3') #greentext open
+  comment = comment.replace('</span>', '') #close color
+  comment = stripHTML(comment) #remove the rest of html tags
+  
+  return comment
+
 def search(board, search):
   res = []
 
@@ -15,13 +27,7 @@ def search(board, search):
           subject = j.get('sub', 'Empty subject')
           subject = unescape(subject)
           post = j.get('com', 'Empty post')
-          post = unescape(post)
-          post = post.replace('<br>', ' ')
-          post = post.replace('<wbr>', '')
-          post = post.replace('<span class="quote">', '3') #greentext open
-          post = post.replace('<span class="deadlink">', '3') #greentext open
-          post = post.replace('</span>', '') #close color
-          post = stripHTML(post) #remove the rest of html tags
+          post = format(post)
   
           if len(post) > 100:
             post = post[0:100] + '...' #close color here also
@@ -53,13 +59,7 @@ def getThreadInfo(board, threadNo):
   subject = op.get('sub', 'Empty subject')
   subject = unescape(subject)
   post = op.get('com', 'Empty post')
-  post = unescape(post)
-  post = post.replace('<br>', ' ')
-  post = post.replace('<wbr>', '')
-  post = post.replace('<span class="quote">', '3') #greentext open
-  post = post.replace('<span class="deadlink">', '3') #greentext open
-  post = post.replace('</span>', '') #close color
-  post = stripHTML(post) #remove the rest of html tags
+  post = format(post)
 
   if len(post) > 100:
     post = post[0:100] + '...' #close color here also
