@@ -32,7 +32,7 @@ def search(board, search):
           if len(post) > 100:
             post = post[0:100] + '...' #close color here also
             
-          boardLink = 'https://boards.4chan.org/%s/res/%s' % (board, j['no'])
+          boardLink = 'https://boards.4chan.org/%s/thread/%s' % (board, j['no'])
   
           text = '%s /%s/ | %s | %s | %s (R:%s, I:%s)' % (logo, board, subject, post, boardLink, j['replies'], j['images'])
           res.append(text)
@@ -51,7 +51,7 @@ def getValidBoards():
   return boards
 
 def getThreadInfo(board, threadNo):
-  info = json.load(urllib.urlopen('https://a.4cdn.org/%s/res/%s.json' % (board, threadNo)))
+  info = json.load(urllib.urlopen('https://a.4cdn.org/%s/thread/%s.json' % (board, threadNo)))
   
   op = info['posts'][0]
   

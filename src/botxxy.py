@@ -1200,9 +1200,9 @@ def urlSpoiler(msg):
               url_title = unescape(url_title).strip().replace('\n', ' ')
               myprint("Title: %s" % (url_title))
               sendChanMsg(chan, "%s's link title: %s %s" % (nick, yt_logo, url_title))
-          elif re.search("4chan.org/(.+)/res/(\d+)", url):
+          elif re.search("4chan.org/(.+)/thread/(\d+)", url):
             myprint("It's a 4chan link")
-            threadInfo = re.search("4chan.org/(.+)/res/(\d+)", url)
+            threadInfo = re.search("4chan.org/(.+)/thread/(\d+)", url)
             board = threadInfo.group(1)
             thread = threadInfo.group(2)
             url_title = s4chan.getThreadInfo(board, thread)
