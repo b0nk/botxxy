@@ -1286,7 +1286,7 @@ def chanSearch(msg):
       sendNickMsg(nick, "You are not in a channel")
     else:
       chan = getChannel(msg)
-      args = re.search(":!4chan (\w+) (.+)", msg)
+      args = re.search(":!4chan /?(\w+)/? (.+)", msg)
       if args:
         board = args.group(1)
         sterms = args.group(2)
