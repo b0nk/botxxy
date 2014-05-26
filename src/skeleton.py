@@ -26,10 +26,10 @@ def ping(reply): # This is our first function! It will respond to server Pings.
 
 def sendChanMsg(chan, msg): # This sends a message to the channel 'chan'
   ircsock.send("PRIVMSG %s :%s\n" % (chan, msg.encode("utf8")))
-  
+
 def sendNickMsg(nick, msg): # This sends a notice to the nickname 'nick'
   ircsock.send("NOTICE %s :%s\n" % (nick, msg.encode("utf8")))
-  
+
 def getNick(msg): # Returns the nickname of whoever requested a command from a RAW irc privmsg. Example in commentary below.
   # ":b0nk!LoC@fake.dimension PRIVMSG #test :lolmessage"
   return msg.split('!')[0].replace(':','')
@@ -72,11 +72,10 @@ while 1: # This is our infinite loop where we'll wait for commands to show up, t
   ircmsg = ircsock.recv(1024) # Receive data from the server
   ircmsg = ircmsg.strip('\n\r') # Removing any unnecessary linebreaks
   myprint (ircmsg) # Here we print what's coming from the server
-  
+
   if "PING :" in ircmsg: # If the server pings us then we've got to respond!
     reply = ircmsg.split("PING :")[1] # In some IRCds it is mandatory to reply to PING the same message we recieve
     ping(reply)
-  
+
   if ":hello " + botnick in ircmsg.lower(): # If we can find "Hello botnick" it will call the function hello()
     hello(ircmsg)
-  

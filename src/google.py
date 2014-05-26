@@ -18,7 +18,7 @@ def webSearch(terms):
     url = urllib.unquote(url)
     string = "%s: %s ( %s )" % (g_logo, title, url)
     output.append(string)
-    
+
   return output
 
 def imageSearch(terms):
@@ -29,9 +29,9 @@ def imageSearch(terms):
   j = json.loads(data)
   res = j['responseData']['results']
   output = []
-  
+
   for i in res:
     string = "%s Images: %s (%sx%s)" % (g_logo, i['unescapedUrl'], i['width'], i['height'])
     output.append(string)
-    
+
   return output

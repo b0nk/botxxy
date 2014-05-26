@@ -137,13 +137,13 @@ def sendChanMsg(chan, msg): # This sends a message to the channel 'chan'
     ircsock.send("PRIVMSG %s :%s\n" % (chan, msg.encode("utf8")))
   except UnicodeDecodeError:
     ircsock.send("PRIVMSG %s :%s\n" % (chan, msg))
-  
+
 def sendNickMsg(nick, msg): # This sends a notice to the nickname 'nick'
   try:
     ircsock.send("NOTICE %s :%s\n" % (nick, msg.encode("utf8")))
   except UnicodeDecodeError:
     ircsock.send("NOTICE %s :%s\n" % (nick, msg))
-    
+
 def getNick(msg): # Returns the nickname of whoever requested a command from a RAW irc privmsg. Example in commentary below.
   # ":b0nk!LoC@fake.dimension PRIVMSG #test :lolmessage"
   return msg.split('!')[0].replace(':','')
@@ -170,7 +170,7 @@ def hello(msg): # This function responds to a user that inputs "Hello botxxy"
     chan = getChannel(msg)
     myprint("%s said hi in %s" % (nick, chan))
     sendChanMsg(chan, "Hello %s! Type !help for more information." % (nick))
-  
+
 def identify(again):
   ircsock.send("NICK %s\n" % (botnick)) # Here we actually assign the nick to the bot
   time.sleep(3)
@@ -178,7 +178,7 @@ def identify(again):
   myprint("Bot identified")
   if again:
     joinChans(chans)
-    
+
 def resetLog():
   with open("botlog.log", "w") as f:
     f.write('')
@@ -201,7 +201,7 @@ def loadAuth():
     authDB = []
 
 # Ignores
-  
+
 def loadIgn():
   global ignUsrs
   try:
@@ -210,7 +210,7 @@ def loadIgn():
   except IOError as e:
     myprint("Ign -> FAIL | %s" % e)
     ignUsrs = []
-  
+
 # Greets
 
 def loadGreets():
@@ -221,7 +221,7 @@ def loadGreets():
   except IOError as e:
     myprint("Greets -> FAIL | %s" % e)
     greets = []
-  
+
 # 8ball
 
 def load8ball():
@@ -232,7 +232,7 @@ def load8ball():
   except IOError as e:
     myprint("8ball -> FAIL | %s" % e)
     eightball = []
-  
+
 # Quotes
 
 def loadQuotes():
@@ -265,13 +265,13 @@ def loadLfmUsers():
   except IOError as e:
     myprint("LfmUsers -> FAIL | %s" % e)
     lfmUsers = []
-  
+
 def loadLfm():
   global lastfm
   API_KEY = apikeys.LFM_KEY
   API_SEC = apikeys.LFM_SEC
   lastfm = pylast.LastFMNetwork(api_key = API_KEY, api_secret = API_SEC, username = '', password_hash = '')
-  myprint("last.fm API -> Loaded")  
+  myprint("last.fm API -> Loaded")
 
 # 4chan board list
 
@@ -300,7 +300,7 @@ def authCmd(msg): # Authenticates a nick with the bot
             for i in authDB:
               f.write('%s\n' % i)
               f.closed
-              
+
           sendChanMsg(chan, "Password deleted you dumbass!!!")
           sendNickMsg(nick, "Request a new password.")
     else:
@@ -311,7 +311,7 @@ def authCmd(msg): # Authenticates a nick with the bot
       else:
         password = hashlib.sha256(password).hexdigest() # A HEX representation of the SHA-256 encrypted password
         myprint("ENC: %s" % (password))
-        
+
         for i, content in enumerate(authDB):
           if nick + "|!|" + password in content:
             authUsrs.append(nick)
@@ -342,7 +342,7 @@ def inviteCmd(msg): # Parses the message to extract NICK and CHANNEL
         myprint("Inviting %s to channel %s" % (target, chan))
         sendChanMsg(chan, "Inviting %s here..." % (target))
         invite(target, chan)
-  
+
 def invite(nick, chan): # Invites given nickname to present channel
   ircsock.send("INVITE %s %s\n" % (nick, chan))
 
@@ -689,7 +689,7 @@ def setGreet(nick, newMsg, toSet):
     for i in greets:
       f.write("%s\n" % i)
   f.closed # Closes the file to save resources
-  
+
 def sendGreet(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -706,9 +706,9 @@ def sendGreet(msg):
     if greet:
       sendChanMsg(chan, greet)
 
-  
+
           #TAG (play catch)
-          
+
 def startTag(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -728,7 +728,7 @@ def startTag(msg):
         sendChanMsg(chan, "The game starts and %s is it!" % (nick))
       else: # Warns if game is on progress
         sendChanMsg(chan, "A game is already in progress.")
-    
+
 def endTag(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -745,7 +745,7 @@ def endTag(msg):
         sendChanMsg(chan, "The fun is over people :( it's raining...")
       else:
         sendChanMsg(chan, "There is no game in progress!")
-          
+
 def tag(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -826,9 +826,9 @@ def setTagged(msg):
             sendChanMsg(chan, "Who are you tagging %s? Maybe %s was not here when the game started." % (nick, target))
       else:
         sendChanMsg(chan, "%s we're not playing tag now..." % (nick))
-      
+
           #ROSE
-          
+
 def rose(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -898,9 +898,9 @@ def cake(msg):
             printCake(chan)
           else:
             sendChanMsg(chan, "Unfortunately, %s %s" % (target, random.choice(cakeDeaths)))
-        
+
           #BOOBS
-          
+
 def boobs(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -926,9 +926,9 @@ def boobs(msg):
           myprint("%s sent !boobs to %s" % (nick, target))
           sendChanMsg(chan, "%s shows %s some boobs" % (nick, target))
           sendChanMsg(chan, "[%s] %s [%s]" % (nick, boobsstr, target))
-        
+
           #SAY
-          
+
 def sayCmd(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -942,9 +942,9 @@ def sayCmd(msg):
       target = msg.split(':')[2].split(' ')[1]
       message = msg.split(target)[1].lstrip(' ')
       ircsock.send("PRIVMSG %s :%s\n" % (target, message))
-    
+
           #8BALL
-          
+
 def eightBallCmd(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -967,9 +967,9 @@ def eightBallCmd(msg):
       else:
         myprint("%s didn't ask a question" % (nick))
         sendChanMsg(chan, "How about you ask me a question properly %s? Usage: !8ball [<question>]?" % (nick))
-        
+
           #LAST.FM
-          
+
 def getLfmUser(nick): # this looks for the last.fm username by nick
   global lfmUsers
   user = ''
@@ -1088,7 +1088,7 @@ def nowPlaying(msg): # use of the last.fm interface (pylast) in here
             else: # all went well
               artist_name = np.artist.get_name()# string containing artist name
               track = np.title #string containing track title
-              
+
               try: # here we check if the user has ever played the np track
                 playCount = int(np.get_add_info(target).userplaycount)
               except (ValueError, TypeError): #this error means track was never played so we just say it's 1
@@ -1098,10 +1098,10 @@ def nowPlaying(msg): # use of the last.fm interface (pylast) in here
 
               np = np.get_add_info(target)
               loved = ''
-              
+
               if np.userloved == '1': # checks if np is a loved track to show when brodcasted to channel
                 loved = "4<3 "
-              
+
               raw_tags = np.get_top_tags(5)
               if not raw_tags: # some tracks have no tags so we request the artist tags
                 raw_tags = np.artist.get_top_tags(5)
@@ -1109,7 +1109,7 @@ def nowPlaying(msg): # use of the last.fm interface (pylast) in here
               while raw_tags:
                 tags += raw_tags.pop().item.name + ", " # builds tags string
               tags = tags.rstrip(", ") # removes last comma
-              
+
               myprint("%s is now playing: %s - %s %s(%d plays%s)" % (target, artist_name, track, loved, playCount, tags))
               sendChanMsg(chan, "%s %s is now playing: %s - %s %s(%d plays%s)" % (lfm_logo, target, artist_name, track, loved, playCount, tags))# broadcast to channel
               #last.fm | b0nk is now playing: Joan Jett and the Blackhearts - You Want In, I Want Out (1 plays, rock, rock n roll, Joan Jett, 80s, pop)
@@ -1117,10 +1117,10 @@ def nowPlaying(msg): # use of the last.fm interface (pylast) in here
           print e.details
           sendChanMsg(chan, "%s Error: %s" % (lfm_logo, e.details))
           return None # GTFO
-    
+
 
           #TWITTER
-          
+
 def getTwitter(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -1142,7 +1142,7 @@ def getTwitter(msg):
           res = twitter.search(query, index)
         else:
           res = twitter.getTweet(query, index)
-        
+
         myprint(res)
         sendChanMsg(chan, res)
       else:
@@ -1151,7 +1151,7 @@ def getTwitter(msg):
 
 
           #FML
-          
+
 def fmlCmd(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -1217,14 +1217,14 @@ def urlSpoiler(msg):
             sendChanMsg(chan, "%s's link title: %s" % (nick, url_title))
         else:
           myprint("%s is of type %s" % (url, r['content-type']))
-          
+
       except(socket.error, KeyError, AttributeError, httplib2.RedirectLimit, httplib2.ServerNotFoundError) as e:
         myprint("%s (%s)" % (url, e))
         sendChanMsg(chan, "%s's link error (%s)" % (nick, e))
-        
-  
+
+
           #GOOGLE SEARCH
-          
+
 def gSearch(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -1249,7 +1249,7 @@ def gSearch(msg):
       else:
         myprint("%s used bad arguments for !google" % (nick))
         sendChanMsg(chan, "%s Bad arguments! Usage: !google [search terms]" % (g_logo))
-        
+
 def gImageSearch(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -1274,9 +1274,9 @@ def gImageSearch(msg):
       else:
         myprint("%s used bad arguments for !images" % (nick))
         sendChanMsg(chan, "%s Bad arguments! Usage: !images [search terms]" % (g_logo))
-        
+
           #4chan search
-          
+
 def chanSearch(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -1308,7 +1308,7 @@ def chanSearch(msg):
 
 
           #Humble Bundle
-          
+
 def humbleBundle(msg):
   nick = getNick(msg)
   global ignUsrs
@@ -1321,7 +1321,7 @@ def humbleBundle(msg):
       games = hb.getGames()
       myprint(games)
       sendChanMsg(chan, "%s" % games)
-  
+
           #QUIT
 
 def quitIRC(): #This kills the bot!
@@ -1383,21 +1383,21 @@ try:
   joinChans(chans)
   time.sleep(3)
   stack = []
-  
+
   while 1: # This is our infinite loop where we'll wait for commands to show up, the 'break' function will exit the loop and end the program thus killing the bot
     stack.append(ircsock.recv(1024)) # Receive data from the server
     while stack:
       ircmsg = stack.pop()
       ircmsg = ircmsg.strip('\n\r') # Removing any unnecessary linebreaks
       print ircmsg # Here we print what's coming from the server
-    
+
       if "PING :" in ircmsg: # If the server pings us then we've got to respond!
         reply = ircmsg.split("PING :")[1] # In some IRCds it is mandatory to reply to PING the same message we recieve
         ping(reply)
-      
+
       if " 353 " in ircmsg:
         try:
-          # ":irc.catiechat.net 353 botxxy = #test :KernelPone ~b0nk CommVenus @botxxy " 
+          # ":irc.catiechat.net 353 botxxy = #test :KernelPone ~b0nk CommVenus @botxxy "
           chan = ircmsg.split(" = ")[1].split(' ')[0]
           ircmsg = ircmsg.split(':')[2] # Returns raw list of nicks
           ircmsg = ircmsg.translate(None, '~@+&%') # Removes user mode characters
@@ -1406,12 +1406,12 @@ try:
           myprint("Nicks: %s" % nicks)
           if '353' in nicks:
             ircsock.send("NAMES " + chan + '\n')
-          
+
           # Now that we have the nicks we can decide what to do with them depending on the command
           if "!randkick" in lastCommand:
             lastCommand = ''
             randKick(nicks, chan)
-          
+
           if "!starttag" in lastCommand:
             lastCommand = ''
             if not isTagOn:
@@ -1422,7 +1422,7 @@ try:
               sendChanMsg(chan, "The game is already in progress!")
         except IndexError:
           myprint("Something went wrong...")
-      
+
       if " INVITE " + botnick + " :" in ircmsg:
         tmpstr = ircmsg
         # :botxxy!~I@m.botxxy.you.see INVITE b0nk :#test
@@ -1433,25 +1433,25 @@ try:
           joinChan(target)
           sendChanMsg(target, "Thank you for inviting me here %s!" % (nick))
           tmpstr = ''
-      
+
       hasURL = re.search(urlpat, ircmsg)
-      
+
       if ":hello " + botnick in ircmsg.lower() or ":hi " + botnick in ircmsg.lower(): # If we can find "Hello/Hi botxxy" it will call the function hello(nick)
         hello(ircmsg)
-        
+
       if ":!help" in ircmsg: # checks for !help
         helpcmd(ircmsg)
-      
+
       if ":!ident" in ircmsg:
         user = getUser(ircmsg)
         if user == "b0nk!~LoC@fake.dimension":
           identify(True)
-          
+
       if ":!newlog" in ircmsg:
         user = getUser(ircmsg)
         if user == "b0nk!~LoC@fake.dimension":
           resetLog()
-        
+
       if ":!die" in ircmsg: # checks for !die
         user = getUser(ircmsg)
         if user == "b0nk!~LoC@fake.dimension": # TODO: use auth
@@ -1461,39 +1461,39 @@ try:
           nick = getNick(ircmsg)
           myprint("%s tried to kill the bot. Sending warning..." % (nick))
           sendNickMsg(nick, "I'm afraid I can't let you do that %s..." % nick)
-        
+
       if ":!reload" in ircmsg: # let's say it was made to reload the vars and arrays
         user = getUser(ircmsg)
         if user == "b0nk!~LoC@fake.dimension":
           load()
-      
+
       if ":!invite" in ircmsg:
         inviteCmd(ircmsg)
-        
+
       if ":!voice" in ircmsg:
         voiceCmd(ircmsg)
-        
+
       if ":!devoice" in ircmsg:
         devoiceCmd(ircmsg)
-        
+
       if ":!op" in ircmsg:
         opCmd(ircmsg)
-        
+
       if ":!deop" in ircmsg:
         deopCmd(ircmsg)
-      
+
       if ":!hop" in ircmsg:
         hopCmd(ircmsg)
-        
+
       if ":!dehop" in ircmsg:
         dehopCmd(ircmsg)
-      
+
       if ":!kick" in ircmsg:
         kickCmd(ircmsg)
-        
+
       if ":!rtd" in ircmsg:
         dice(ircmsg)
-        
+
       if ":!randkick" in ircmsg:
         nick = getNick(ircmsg)
         if nick not in ignUsrs:
@@ -1504,31 +1504,31 @@ try:
             ircsock.send("NAMES " + chan + '\n')
             myprint("Getting NAMES from %s" % (chan))
             lastCommand = "!randkick"
-        
+
       if ":!topic" in ircmsg:
         topicCmd(ircmsg)
-      
+
       if ":!pass" in ircmsg:
         authCmd(ircmsg)
-      
+
       if ":!quote" in ircmsg:
         quoteCmd(ircmsg)
-        
+
       if ":!addquote" in ircmsg:
         addQuote(ircmsg)
-        
+
       if ":!blueberry" in ircmsg: #this will broadcast all of blueberrys favorite quotes :3
         bbfquotes(ircmsg)
-      
+
       if " JOIN " in ircmsg:
         sendGreet(ircmsg)
-        
+
       if ":!setjoinmsg" in ircmsg:
         setGreetCmd(ircmsg)
-      
+
       if ":!tag" in ircmsg:
         tag(ircmsg)
-        
+
       if ":!starttag" in ircmsg:
         nick = getNick(ircmsg)
         if nick not in ignUsrs:
@@ -1540,65 +1540,65 @@ try:
             myprint("Getting NAMES from %s" % (chan))
             lastCommand = "!starttag"
             tmpstr = ircmsg
-      
+
       if ":!endtag" in ircmsg:
         endTag(ircmsg)
-        
+
       if ":!settagged" in ircmsg:
         setTagged(ircmsg)
-        
+
       if ":!rose" in ircmsg:
         rose(ircmsg)
-        
+
       if ":!boobs" in ircmsg:
         boobs(ircmsg)
-  
+
       if ":!cake" in ircmsg:
         cake(ircmsg)
-        
+
       if ":!say" in ircmsg:
         sayCmd(ircmsg)
-        
+
       if ":!8ball" in ircmsg:
         eightBallCmd(ircmsg)
-        
+
       if ":!ign" in ircmsg:
         ignCmd(ircmsg)
-      
+
       if ":.np" in ircmsg:
         nowPlaying(ircmsg)
-      
+
       if ":.setuser" in ircmsg:
         setLfmUserCmd(ircmsg)
-        
+
       if ":.compare" in ircmsg:
         compareLfmUsers(ircmsg)
-        
+
       if ":!google" in ircmsg:
         gSearch(ircmsg)
-        
+
       if ":!images" in ircmsg:
         gImageSearch(ircmsg)
-        
+
       if ":!twitter" in ircmsg:
         getTwitter(ircmsg)
-        
+
       if ":!fml" in ircmsg:
         fmlCmd(ircmsg)
-        
+
       if ":!4chan" in ircmsg:
         chanSearch(ircmsg)
-        
+
       if ":!hb" in ircmsg:
         humbleBundle(ircmsg)
-        
+
       if hasURL is not None and 'nospoil' not in ircmsg:
         urlSpoiler(ircmsg)
         hasURL = None
-    
+
       if ircmsg.startswith("ERROR :Closing Link:"):
         raise socket.error('derp')
-      
+
 except socket.error as e:
   myprint("Bot killed / timedout (%s)" % e)
   sys.exit(-1)
