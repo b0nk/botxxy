@@ -1193,7 +1193,7 @@ def urlSpoiler(msg):
               yt_link = 'https://youtu.be/%s' % re.search('v\=([a-zA-Z0-9-_=]+)', url).group(1)
               myprint (yt_link)
               sendChanMsg(chan, "%s's link title: %s %s | %s" % (nick, yt_logo, url_title, yt_link))
-            except(IndexError):
+            except(IndexError, AttributeError):
               r, data = h.request(url, "GET", headers = def_headers)
               soup = bs4.BeautifulSoup(data)
               url_title = stripHTML(str(soup.find('title')))
