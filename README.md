@@ -14,6 +14,8 @@ Use [skeleton.py](https://github.com/b0nk/botxxy/blob/master/src/skeleton.py) to
 `pip install requests`
 * [httplib2](https://github.com/jcgregorio/httplib2)  
 `pip install httplib2`
+* [feedparser](https://code.google.com/p/feedparser/)  
+`pip install feedparser`
 
 ## Includes:
 
