@@ -57,6 +57,9 @@ import s4chan
 # Humble Bundle
 import hb
 
+# Piratebay Roulette
+import tpb
+
 # Some basic variables used to configure the bot
 
 server = "irc.catiechat.net"
@@ -1320,7 +1323,23 @@ def humbleBundle(msg):
       chan = getChannel(msg)
       games = hb.getGames()
       myprint(games)
-      sendChanMsg(chan, "%s" % games)
+      sendChanMsg(chan, games)
+
+      # Piratebay roulette
+
+def tpbRoulette(msg):
+  nick = getNick(msg)
+  global ignUsrs
+  if nick not in ignUsrs:
+    if '#' not in msg.split(" PRIVMSG ")[-1].split(' :')[0]:
+      myprint("%s sent !tpb outside of a channel" % (nick))
+      sendNickMsg(nick, "You are not in a channel")
+    else:
+      chan = getChannel(msg)
+      res = tpb.getLatest()
+      myprint(res)
+      sendChanMsg(chan, res)
+
 
           #QUIT
 
@@ -1342,7 +1361,7 @@ def helpcmd(msg): #Here is the help message to be sent as a private message to t
     time.sleep(0.5)
     sendNickMsg(nick, "You can also invite me to a channel and I'll thank you for inviting me there.")
     time.sleep(0.5)
-    sendNickMsg(nick, "General commands: !help !invite !rtd !quote !addquote !setjoinmsg !starttag !endtag !tag !rose !boobs !8ball !pass !cake !fml")
+    sendNickMsg(nick, "General commands: !help !invite !rtd !quote !addquote !setjoinmsg !starttag !endtag !tag !rose !boobs !8ball !pass !cake !fml !tpb")
     time.sleep(0.5)
     sendNickMsg(nick, "%s commands: .setuser .np .compare" % (lfm_logo))
     time.sleep(0.5)
@@ -1591,6 +1610,9 @@ try:
 
       if ":!hb" in ircmsg:
         humbleBundle(ircmsg)
+
+      if ":!tpb" in ircmsg:
+        tpbRoulette(ircmsg)
 
       if hasURL is not None and 'nospoil' not in ircmsg:
         urlSpoiler(ircmsg)
