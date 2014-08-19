@@ -1,5 +1,6 @@
 import feedparser
 
+
 def getLatest():
   feed = feedparser.parse("http://rss.thepiratebay.se/0")
 

@@ -1,9 +1,11 @@
-import sys, time
+import sys
+import time
 
 # sys.stdout.encoding is None when piping to a file.
 encoding = sys.stdout.encoding
 if encoding is None:
   encoding = sys.getfilesystemencoding()
+
 
 class Logger(object):
   def __init__(self):

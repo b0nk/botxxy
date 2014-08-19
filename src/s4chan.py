@@ -1,19 +1,26 @@
-import urllib, json
+import urllib
+import json
 from mylib import unescape, stripHTML
 
 logo = '3::54chan'
+
 
 def format(comment):
 
   comment = unescape(comment)
   comment = comment.replace('<br>', ' ')
   comment = comment.replace('<wbr>', '')
-  comment = comment.replace('<span class="quote">', '3') #greentext open
-  comment = comment.replace('<span class="deadlink">', '3') #greentext open
-  comment = comment.replace('</span>', '') #close color
-  comment = stripHTML(comment) #remove the rest of html tags
+  # greentext open
+  comment = comment.replace('<span class="quote">', '3')
+  # greentext open
+  comment = comment.replace('<span class="deadlink">', '3')
+  # close color
+  comment = comment.replace('</span>', '')
+  # remove the rest of html tags
+  comment = stripHTML(comment)
 
   return comment
+
 
 def search(board, search):
   res = []
@@ -30,7 +37,8 @@ def search(board, search):
           post = format(post)
 
           if len(post) > 100:
-            post = post[0:100] + '...' #close color here also
+            # close color here also
+            post = post[0:100] + '...'
 
           boardLink = 'https://boards.4chan.org/%s/thread/%s' % (board, j['no'])
 
@@ -39,6 +47,7 @@ def search(board, search):
     return res
   except(IOError):
     return ['%s Error: Try again later' % logo]
+
 
 def getValidBoards():
   boards = []
@@ -49,6 +58,7 @@ def getValidBoards():
     boards.append(str(i['board']))
 
   return boards
+
 
 def getThreadInfo(board, threadNo):
   info = json.load(urllib.urlopen('https://a.4cdn.org/%s/thread/%s.json' % (board, threadNo)))
@@ -62,6 +72,7 @@ def getThreadInfo(board, threadNo):
   post = format(post)
 
   if len(post) > 100:
-    post = post[0:100] + '...' #close color here also
+    # close color here also
+    post = post[0:100] + '...'
 
   return "%s /%s/ | %s | %s | %s | (R:%s, I:%s)" % (logo, board, name, subject, post, op['replies'], op['images'])

@@ -2,9 +2,12 @@
 import urllib
 from bs4 import BeautifulSoup
 
+
 class Quote():
   def __init__(self, number, text, disagree, agree):
       self.number, self.text, self.disagree, self.agree = number, text, disagree, agree
+
+
 def get():
   rscript_fml = urllib.urlopen("http://rscript.org/lookup.php?type=fml")
   fml = BeautifulSoup(rscript_fml)

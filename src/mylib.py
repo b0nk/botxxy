@@ -1,4 +1,6 @@
-import re, htmlentitydefs
+import re
+import htmlentitydefs
+
 
 def unescape(text):
   def fixup(m):
@@ -18,11 +20,14 @@ def unescape(text):
         text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
       except KeyError:
         pass
-    return text # leave as is
+    # leave as is
+    return text
   return re.sub("&#?\w+;", fixup, text)
+
 
 def stripHTML(html):
   return re.sub('<[^<]+?>', '', html)
+
 
 def myprint(msg):
   prompt = '>> '
