@@ -1,12 +1,16 @@
 import requests
 import bs4
 
-from mylib import stripHTML, unescape
 
-
-# TODO: FIX THIS IT GETS BROKEN EVERY BUNDLE
 def getGames():
-  soup = bs4.BeautifulSoup(requests.get("http://humblebundle.com").text)
-  games = [unescape(str.strip(stripHTML(str(i)))) for i in soup.find_all('span', 'item-title') if str.strip(stripHTML(str(i))) is not '']
+
+  not_games = ["American Red Cross", "Child's Play Charity", "More games coming soon!"]
+  games = []
+
+  soup = bs4.BeautifulSoup(requests.get("https://humblebundle.com").text)
+  for i in soup.find_all('span', 'game-box'):
+    game = i.find('img')['alt']
+    if game not in not_games and "Soundtrack" not in game:
+      games.append(game)
 
   return ", ".join(games)
