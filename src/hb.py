@@ -4,7 +4,10 @@ import bs4
 
 def getGames():
 
-  not_games = ["American Red Cross", "Child's Play Charity", "More games coming soon!"]
+  not_games = ["Electronic Frontier Foundation",
+               "American Red Cross",
+               "Child's Play Charity",
+               "More games coming soon!"]
   games = []
 
   soup = bs4.BeautifulSoup(requests.get("https://humblebundle.com").text)
